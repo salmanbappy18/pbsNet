@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PBS Net API - ডকুমেন্টেশন</title>
+    <style>
+        :root {
+            --sidebar-bg: #2c3e50;
+            --sidebar-text: #ecf0f1;
+            --sidebar-link-hover: #34495e;
+            --content-bg: #ecf0f1;
+            --text-color: #2c3e50;
+            --heading-color: #34495e;
+            --code-bg: #ffffff;
+            --border-color: #bdc3c7;
+            --method-get: #3498db;
+            --method-post: #2ecc71;
+            --method-put: #f39c12;
+            --method-delete: #e74c3c;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            margin: 0;
+            background-color: var(--content-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        .container {
+            display: flex;
+        }
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .sidebar h1 {
+            font-size: 1.5em;
+            margin-top: 0;
+            border-bottom: 1px solid var(--sidebar-link-hover);
+            padding-bottom: 10px;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li a {
+            color: var(--sidebar-text);
+            text-decoration: none;
+            display: block;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .sidebar ul li a:hover {
+            background-color: var(--sidebar-link-hover);
+        }
+        .sidebar .group-title {
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #95a5a6;
+        }
+        .main-content {
+            margin-left: 280px;
+            padding: 30px 40px;
+            width: calc(100% - 280px);
+        }
+        .api-section {
+            margin-bottom: 50px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 30px;
+        }
+        h2 {
+            font-size: 2em;
+            color: var(--heading-color);
+            border-bottom: 2px solid var(--heading-color);
+            padding-bottom: 10px;
+        }
+        h3 {
+            font-size: 1.5em;
+            color: var(--heading-color);
+        }
+        .endpoint {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--code-bg);
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            font-size: 1.1em;
+            word-break: break-all;
+        }
+        .method {
+            padding: 4px 8px;
+            color: white;
+            border-radius: 4px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-right: 10px;
+        }
+        .get { background-color: var(--method-get); }
+        .post { background-color: var(--method-post); }
+        .put { background-color: var(--method-put); }
+        .delete { background-color: var(--method-delete); }
+        
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            position: relative;
+        }
+        code {
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #7f8c8d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .copy-btn:hover {
+            background-color: #95a5a6;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <h1>PBS Net API</h1>
+            <ul>
+                <li class="group-title">সাধারণ ধারণা</li>
+                <li><a href="#introduction">ভূমিকা</a></li>
+                <li><a href="#authentication">প্রমাণীকরণ</a></li>
+                
+                <li class="group-title">ব্যবহারকারী ও প্রমাণীকরণ</li>
+                <li><a href="#register-user">ব্যবহারকারী রেজিস্টার</a></li>
+                <li><a href="#login-user">ব্যবহারকারী লগইন</a></li>
+                <li><a href="#forgot-password">পাসওয়ার্ড রিসেট</a></li>
+                <li><a href="#change-password">পাসওয়ার্ড পরিবর্তন</a></li>
+                <li><a href="#profile">প্রোফাইল দেখা ও আপডেট</a></li>
+                <li><a href="#search-user">ব্যবহারকারী খোঁজা</a></li>
+
+                <li class="group-title">নোট ব্যবস্থাপনা</li>
+                <li><a href="#create-note">নতুন নোট তৈরি</a></li>
+                <li><a href="#get-note">নোটের বিবরণ দেখা</a></li>
+                <li><a href="#update-note">নোট আপডেট</a></li>
+                <li><a href="#delete-note">নোট ডিলিট</a></li>
+
+                <li class="group-title">ভূমিকা ও অনুমতি</li>
+                <li><a href="#add-permission">নোটে ব্যবহারকারী যুক্ত</a></li>
+                <li><a href="#remove-permission">নোট থেকে ব্যবহারকারী বাদ</a></li>
+
+                <li class="group-title">ড্যাশবোর্ড ও ইন্টার‍্যাকশন</li>
+                <li><a href="#my-notes">আমার নোটের তালিকা</a></li>
+                <li><a href="#pbs-notes">PBS-এর সব নোট</a></li>
+
+                <li class="group-title">ভিউয়ার রিকোয়েস্ট সিস্টেম</li>
+                <li><a href="#request-access">ভিউয়ার হওয়ার অনুরোধ</a></li>
+                <li><a href="#view-requests">পেন্ডিং রিকোয়েস্ট দেখা</a></li>
+                <li><a href="#manage-request">রিকোয়েস্ট পরিচালনা</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <section id="introduction" class="api-section">
+                <h2>ভূমিকা</h2>
+                <p>PBS Net API হলো একটি RESTful সার্ভিস যা ব্যবহারকারী ব্যবস্থাপনা, নোট তৈরি ও শেয়ারিং, এবং অনুমতি নিয়ন্ত্রণের জন্য ডিজাইন করা হয়েছে। সকল অনুরোধ এবং প্রতিক্রিয়া (Request & Response) JSON ফরম্যাটে হবে।</p>
+                <p><strong>Base URL:</strong> <code>http://localhost:3000</code></p>
+            </section>
+
+            <section id="authentication" class="api-section">
+                <h2>প্রমাণীকরণ (Authentication)</h2>
+                <p>এই এপিআই-তে JWT (JSON Web Token) ব্যবহার করে প্রমাণীকরণ করা হয়। ব্যবহারকারীকে প্রথমে <code>/auth/login</code> এন্ডপয়েন্টে লগইন করে একটি টোকেন সংগ্রহ করতে হবে। এরপর সুরক্ষিত (Private) এন্ডপয়েন্টগুলো অ্যাক্সেস করার জন্য প্রতিটি অনুরোধের <strong>Headers</strong>-এ এই টোকেনটি পাঠাতে হবে।</p>
+                <p><strong>হেডার ফরম্যাট:</strong></p>
+                <pre><code>Authorization: Bearer &lt;YOUR_JWT_TOKEN&gt;</code></pre>
+            </section>
+
+            <section id="register-user" class="api-section">
+                <h3>ব্যবহারকারী রেজিস্টার করা</h3>
+                <p class="endpoint"><span class="method post">POST</span> /auth/register</p>
+                <p>নতুন ব্যবহারকারী তৈরি করার জন্য এই এন্ডপয়েন্ট ব্যবহার করা হয়।</p>
+                <h4>Request Body:</h4>
+                <pre><code>{
+    "email": "user@example.com",
+    "mobile": "01700000000",
+    "password": "strongpassword123"
+}</code></pre>
+                <h4>Success Response (201 Created):</h4>
+                <pre><code>{
+    "message": "User registered successfully.",
+    "user": {
+        "id": "c3e4a5b6-...",
+        "email": "user@example.com",
+        "mobile": "01700000000"
+    }
+}</code></pre>
+            </section>
+
+            <section id="login-user" class="api-section">
+                <h3>ব্যবহারকারী লগইন</h3>
+                <p class="endpoint"><span class="method post">POST</span> /auth/login</p>
+                <p>ইমেইল বা মোবাইল নম্বর এবং পাসওয়ার্ড ব্যবহার করে লগইন করে JWT টোকেন সংগ্রহ করা।</p>
+                <h4>Request Body:</h4>
+                <pre><code>{
+    "identifier": "user@example.com",
+    "password": "strongpassword123"
+}</code></pre>
+                <h4>Success Response (200 OK):</h4>
+                <pre><code>{
+    "message": "Login successful.",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+        "id": "c3e4a5b6-...",
+        "email": "user@example.com"
+    }
+}</code></pre>
+            </section>
+            
+            <section id="forgot-password" class="api-section">
+                <h3>পাসওয়ার্ড রিসেট অনুরোধ</h3>
+                <p class="endpoint"><span class="method post">POST</span> /auth/forgot-password</p>
+                <p>পাসওয়ার্ড রিসেট করার জন্য ইমেইলে একটি লিঙ্ক পাঠায়।</p>
+                <h4>Request Body:</h4>
+                <pre><code>{
+    "email": "user@example.com"
+}</code></pre>
+                <h4>Success Response (200 OK):</h4>
+                <pre><code>{
+    "message": "If an account with that email exists, a password reset link has been sent."
+}</code></pre>
+            </section>
+            
+            <section id="change-password" class="api-section">
+                <h3>পাসওয়ার্ড পরিবর্তন করা</h3>
+                <p class="endpoint"><span class="method put">PUT</span> /users/password</p>
+                <p>লগইন করা অবস্থায় বর্তমান পাসওয়ার্ড দিয়ে নতুন পাসওয়ার্ড সেট করা। (Access: Private)</p>
+                <h4>Request Body:</h4>
+                <pre><code>{
+    "currentPassword": "oldstrongpassword",
+    "newPassword": "newverystrongpassword"
+}</code></pre>
+                <h4>Success Response (200 OK):</h4>
+                <pre><code>{
+    "message": "Password changed successfully."
+}</code></pre>
+            </section>
+            
+            <section id="profile" class="api-section">
+                <h3>প্রোফাইল দেখা ও আপডেট করা</h3>
+                <p class="endpoint"><span class="method get">GET</span> /users/profile</p>
+                <p>লগইন করা ব্যবহারকারীর প্রোফাইল তথ্য দেখা। (Access: Private)</p>
+                <h4>Success Response (200 OK):</h4>
+                <pre><code>{
+    "id": "c3e4a5b6-...",
+    "email": "user@example.com",
+    "mobile": "01700000000",
+    "name": "Sabbir Ahmed",
+    "position": "AGM (IT)",
+    "pbs_name": "Dhaka PBS-1"
+}</code></pre>
+                <hr style="margin: 30px 0;">
+                <p class="endpoint"><span class="method put">PUT</span> /users/profile</p>
+                <p>ব্যবহারকারীর প্রোফাইল তথ্য আপডেট করা। (Access: Private)</p>
+                <h4>Request Body:</h4>
+                <pre><code>{
+    "name": "Sabbir Ahmed Khan",
+    "position": "Sr. AGM (IT)"
+}</code></pre>
+                <h4>Success Response (200 OK):</h4>
+                <pre><code>{
+    "message": "Profile updated successfully.",
+    "user": {
+        "name": "Sabbir Ahmed Khan",
+        "position": "Sr. AGM (IT)"
+    }
+}</code></pre>
+            </section>
+            
+            <section id="search-user" class="api-section">
+                <h3>ব্যবহারকারীকে খোঁজা</h3>
+                <p class="endpoint"><span class="method get">GET</span> /users/search?mobile={mobile_number}</p>
+                <p class="endpoint"><span class="method get">GET</span> /users/{userId}</p>
+                <p>মোবাইল নম্বর অথবা User ID ব্যবহার করে অন্য ব্যবহারকারীকে খুঁজে বের করা। (Access: Private)</p>
+                <h4>Success Response (200 OK):</h4>
+                <pre><code>{
+    "id": "d4f5a6b7-...",
+    "email": "anotheruser@example.com",
+    "mobile": "01800000000",
+    "name": "Another User"
+}</code></pre>
+            </section>
+
+            <section id="create-note" class="api-section">
+                <h3>নতুন নোট তৈরি করা</h3>
+                <p class="endpoint"><span class="method post">POST</span> /notes</p>
+                <p>একটি নতুন নোট তৈরি করা। যিনি তৈরি করবেন, তিনি স্বয়ংক্রিয়ভাবে সেই নোটের Admin হবেন। (Access: Private)</p>
+                <h4>Request Body:</h4>
+                <pre><code>{
+    "name": "Monthly Maintenance Report - August",
+    "office_name": "Savar Zonal Office",
+    "pbs_name": "Dhaka PBS-1",
+    "type": "Report",
+    "note_data": {
+        "status": "Completed"
+    }
+}</code></pre>
+                <h4>Success Response (201 Created):</h4>
+                <pre><code>{
+    "message": "Note created successfully.",
+    "note": {
+        "id": "A1B2C3D4",
+        "name": "Monthly Maintenance Report - August"
+    }
+}</code></pre>
+            </section>
+            
+            <section id="get-note" class="api-section">
+                <h3>নোটের বিবরণ দেখা</h3>
+                <p class="endpoint"><span class="method get">GET</span> /notes/{noteId}</p>
+                <p>একটি নির্দিষ্ট নোটের সম্পূর্ণ বিবরণ দেখা। (Access: Admin/Viewer of the note)</p>
+                <h4>Success Response (200 OK):</h4>
+                <pre><code>{
+    "id": "A1B2C3D4",
+    "name": "Monthly Maintenance Report - August",
+    "note_data": {
+        "status": "Completed"
+    }
+}</code></pre>
+            </section>
+
+            <section id="update-note" class="api-section">
+                <h3>নোট আপডেট করা</h3>
+                <p class="endpoint"><span class="method put">PUT</span> /notes/{noteId}</p>
+                <p>একটি নির্দিষ্ট নোটের তথ্য পরিবর্তন করা। (Access: Admin of the note)</p>
+                 <h4>Request Body:</h4>
+                <pre><code>{
+    "name": "Monthly Report - August (Revised)",
+    "note_data": {
+        "status": "Approved"
+    }
+}</code></pre>
+                <h4>Success Response (200 OK):</h4>
+                <pre><code>{
+    "message": "Note updated successfully.",
+    "note": {
+        "id": "A1B2C3D4",
+        "name": "Monthly Report - August (Revised)"
+    }
+}</code></pre>
+            </section>
+
+            <section id="delete-note" class="api-section">
+                <h3>নোট ডিলিট করা</h3>
+                <p class="endpoint"><span class="method delete">DELETE</span> /notes/{noteId}</p>
+                <p>একটি নোট স্থায়ীভাবে মুছে ফেলা। (Access: Admin of the note)</p>
+                <h4>Success Response (200 OK):</h4>
+                <pre><code>{
+    "message": "Note deleted successfully."
+}</code></pre>
+            </section>
+            
+            <section id="add-permission" class="api-section">
+                <h3>নোটে ব্যবহারকারী যুক্ত করা</h3>
+                <p class="endpoint"><span class="method post">POST</span> /notes/{noteId}/permissions</p>
+                <p>অন্য ব্যবহারকারীকে নোটে Admin বা Viewer হিসেবে যুক্ত করা। (Access: Admin of the note)</p>
+                <h4>Request Body:</h4>
+                <pre><code>{
+    "mobile": "01900000000",
+    "role": "viewer"
+}</code></pre>
+                <h4>Success Response (201 Created):</h4>
+                <pre><code>{
+    "message": "User successfully added as viewer."
+}</code></pre>
+            </section>
+
+            <section id="remove-permission" class="api-section">
+                <h3>নোট থেকে ব্যবহারকারী বাদ দেওয়া</h3>
+                <p class="endpoint"><span class="method delete">DELETE</span> /notes/{noteId}/permissions</p>
+                <p>নোট থেকে কোনো Admin বা Viewer-কে বাদ দেওয়া। (Access: Admin of the note)</p>
+                <h4>Request Body:</h4>
+                <pre><code>{
+    "userIdToRemove": "d4f5a6b7-..."
+}</code></pre>
+                <h4>Success Response (200 OK):</h4>
+                <pre><code>{
+    "message": "User removed from the note successfully."
+}</code></pre>
+            </section>
+
+            <section id="my-notes" class="api-section">
+                <h3>আমার নোটের তালিকা</h3>
+                <p class="endpoint"><span class="method get">GET</span> /dashboard/my-notes</p>
+                <p>ব্যবহারকারী যে সমস্ত নোটের Admin বা Viewer, সেগুলোর তালিকা দেখা। (Access: Private)</p>
+                <h4>Success Response (200 OK):</h4>
+                <pre><code>[
+    {
+        "role": "admin",
+        "notes": {
+            "id": "A1B2C3D4",
+            "name": "Monthly Maintenance Report"
+        }
+    }
+]</code></pre>
+            </section>
+
+            <section id="pbs-notes" class="api-section">
+                <h3>PBS-এর সব নোট</h3>
+                <p class="endpoint"><span class="method get">GET</span> /dashboard/pbs-notes</p>
+                <p>ব্যবহারকারীর প্রোফাইলের PBS Name-এর অধীনে থাকা সমস্ত নোটের তালিকা দেখা। (Access: Private)</p>
+                <h4>Success Response (200 OK):</h4>
+                <pre><code>[
+    {
+        "id": "A1B2C3D4",
+        "name": "Monthly Maintenance Report",
+        "note_data": { "status": "Completed" }
+    },
+    {
+        "id": "K5L6M7N8",
+        "name": "Billing Cycle Analysis"
+    }
+]</code></pre>
+                <p><em>দ্রষ্টব্য: যে নোটগুলোতে ব্যবহারকারীর অনুমতি নেই, সেগুলোর `note_data` দেখানো হবে না।</em></p>
+            </section>
+
+            <section id="request-access" class="api-section">
+                <h3>ভিউয়ার হওয়ার অনুরোধ</h3>
+                <p class="endpoint"><span class="method post">POST</span> /notes/{noteId}/request-access</p>
+                <p>কোনো নোটে Viewer হওয়ার জন্য তার Admin-দের কাছে অনুরোধ পাঠানো। (Access: Private)</p>
+                <h4>Success Response (201 Created):</h4>
+                <pre><code>{
+    "message": "Viewer access request sent successfully."
+}</code></pre>
+            </section>
+
+            <section id="view-requests" class="api-section">
+                <h3>পেন্ডিং রিকোয়েস্ট দেখা</h3>
+                <p class="endpoint"><span class="method get">GET</span> /notes/{noteId}/requests</p>
+                <p>একটি নির্দিষ্ট নোটের জন্য আসা সমস্ত পেন্ডিং ভিউয়ার রিকোয়েস্টের তালিকা দেখা। (Access: Admin of the note)</p>
+                <h4>Success Response (200 OK):</h4>
+                <pre><code>[
+    {
+        "id": 1,
+        "status": "pending",
+        "requester": {
+            "id": "e5f6a7b8-...",
+            "name": "Requesting User"
+        }
+    }
+]</code></pre>
+            </section>
+
+            <section id="manage-request" class="api-section">
+                <h3>রিকোয়েস্ট পরিচালনা</h3>
+                <p class="endpoint"><span class="method put">PUT</span> /notes/requests/{requestId}</p>
+                <p>একটি ভিউয়ার রিকোয়েস্ট Accept (গ্রহণ) বা Reject (প্রত্যাখ্যান) করা। (Access: Admin of the note)</p>
+                <h4>Request Body:</h4>
+                <pre><code>{
+    "action": "accept"
+}</code></pre>
+                <h4>Success Response (200 OK):</h4>
+                <pre><code>{
+    "message": "Request accepted. User is now a viewer."
+}</code></pre>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('.sidebar a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add copy to clipboard buttons to all pre tags
+        document.querySelectorAll('pre').forEach(preElement => {
+            const button = document.createElement('button');
+            button.innerText = 'Copy';
+            button.className = 'copy-btn';
+            preElement.appendChild(button);
+
+            button.addEventListener('click', () => {
+                const code = preElement.querySelector('code').innerText;
+                navigator.clipboard.writeText(code).then(() => {
+                    button.innerText = 'Copied!';
+                    setTimeout(() => {
+                        button.innerText = 'Copy';
+                    }, 2000);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
