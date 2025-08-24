@@ -178,6 +178,7 @@
                 <li class="group-title">ভূমিকা ও অনুমতি</li>
                 <li><a href="#add-permission">নোটে ব্যবহারকারী যুক্ত</a></li>
                 <li><a href="#remove-permission">নোট থেকে ব্যবহারকারী বাদ</a></li>
+                <li><a href="#get-note-users">নোটের ব্যবহারকারী দেখা</a></li> 
 
                 <li class="group-title">ড্যাশবোর্ড ও ইন্টার‍্যাকশন</li>
                 <li><a href="#my-notes">আমার নোটের তালিকা</a></li>
@@ -416,6 +417,43 @@
     "message": "User removed from the note successfully."
 }</code></pre>
             </section>
+            <section id="get-note-users" class="api-section">
+    <h3>নোটের সকল ব্যবহারকারী দেখা</h3>
+    <p class="endpoint"><span class="method get">GET</span> /notes/{noteId}/users</p>
+    <p>একটি নির্দিষ্ট নোটের সাথে যুক্ত সকল ব্যবহারকারী (Admin এবং Viewer) এবং তাদের বিস্তারিত তথ্যের তালিকা দেখা। (Access: Admin/Viewer of the note)</p>
+    
+    <h4>Success Response (200 OK):</h4>
+    <pre><code>[
+    {
+        "role": "admin",
+        "id": "c3e4a5b6-...",
+        "name": "Sabbir Ahmed",
+        "email": "user@example.com",
+        "mobile": "01700000000",
+        "position": "AGM (IT)",
+        "office_name": "Savar Zonal Office",
+        "pbs_name": "Dhaka PBS-1",
+        "profile_pic_url": null
+    },
+    {
+        "role": "viewer",
+        "id": "d4f5a6b7-...",
+        "name": "Another User",
+        "email": "anotheruser@example.com",
+        "mobile": "01800000000",
+        "position": "Jr. Engineer",
+        "office_name": "Main Office",
+        "pbs_name": "Dhaka PBS-1",
+        "profile_pic_url": null
+    }
+]</code></pre>
+
+    <h4>Error Response (404 Not Found):</h4>
+    <p>যদি নোটটি খুঁজে না পাওয়া যায় অথবা ব্যবহারকারীর অনুমতি না থাকে।</p>
+    <pre><code>{
+    "error": "Note not found or you do not have permission."
+}</code></pre>
+</section>
 
             <section id="my-notes" class="api-section">
                 <h3>আমার নোটের তালিকা</h3>
