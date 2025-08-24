@@ -582,6 +582,42 @@ app.delete('/notes/:id/permissions', authenticateToken, authorizeNoteAccess('adm
     }
 });
 
+/**
+ * @route   GET /notes/:id/users
+ * @desc    Get all users (admins and viewers) for a specific note
+ * @access  Private (Admin or Viewer)
+ */
+app.get('/notes/:id/users', authenticateToken, authorizeNoteAccess('viewer'), async (req, res, next) => {
+    try {
+        const { id: noteId } = req.params;
+
+        const { data, error } = await supabase
+            .from('note_permissions')
+            .select(`
+                role,
+                user:users ( id, name, email, mobile, position, office_name, pbs_name, profile_pic_url )
+            `)
+            .eq('note_id', noteId);
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data) {
+            return res.status(404).json({ error: 'No users found for this note or note does not exist.' });
+        }
+
+        // Restructure the data to be more intuitive
+        const users = data.map(permission => ({
+            role: permission.role,
+            ...permission.user
+        }));
+
+        res.json(users);
+    } catch (err) {
+        next(err);
+    }
+});
 
 // 4. DASHBOARD & INTERACTION ROUTES
 // ------------------------------------
@@ -799,4 +835,5 @@ app.use((err, req, res, next) => {
 // --- START THE SERVER ---
 app.listen(PORT, () => {
     console.log(`✅ PBS Net API server is running on http://localhost:${PORT}`);
+
 });
